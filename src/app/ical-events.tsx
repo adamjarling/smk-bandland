@@ -91,7 +91,7 @@ export default async function ICalEvents({ url }: { url?: string }) {
 
   return (
     <section className="w-full mt-8">
-      <h2 className="text-xl font-semibold">Upcoming events</h2>
+      <h2 className="text-4xl uppercase pb-4">Bandland Events</h2>
 
       {errorMessage ? (
         <div className="mt-4 text-sm text-red-600">
