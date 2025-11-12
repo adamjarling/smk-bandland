@@ -40,3 +40,11 @@ h6 {
   outline: none;
   scroll-behavior: smooth;
 }
+
+a {
+  text-decoration: underline;
+
+  &:hover {
+    text-decoration: none;
+  }
+}

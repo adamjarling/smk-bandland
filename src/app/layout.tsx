@@ -21,8 +21,8 @@ const lexendSans = Lexend({
 });
 
 export const metadata: Metadata = {
-  title: "Semmelweiss Klinik Bandland",
-  description: "View available for Bandland scheduling.",
+  title: "Bandland Availability",
+  description: "View availability for Bandland at Semmelweiss Klinik.",
 };
 
 export default function RootLayout({

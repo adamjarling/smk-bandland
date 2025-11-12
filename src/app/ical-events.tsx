@@ -1,4 +1,5 @@
 import BigCalendarClient from "./big-calendar-client";
+import EmailLink from "./EmailLink";
 import ical from "node-ical";
 
 type EventItem = {
@@ -65,11 +66,11 @@ export default async function ICalEvents({ url }: { url?: string }) {
 
               return {
                 uid: e.uid,
-                summary: e.summary,
+                summary: "Busy",
                 start: e.start ? e.start.toISOString() : undefined,
                 end: e.end ? e.end.toISOString() : undefined,
                 location: e.location,
-                category, // <-- include category
+                category,
               } as EventItem;
             });
 
@@ -112,7 +113,17 @@ export default async function ICalEvents({ url }: { url?: string }) {
 
   return (
     <section className="w-full mt-8">
-      <h2 className="text-4xl uppercase pb-4">Bandland Events</h2>
+      <h2 className="text-4xl uppercase pb-4">Bandland Availability</h2>
+
+      <div className="flex flex-col gap-2 mb-10">
+        <a href="https://forms.office.com/e/LXNahZk4Ns" target="_blank">
+          Booking Request Form
+        </a>
+        <p className="text-sm text-zinc-600">
+          *Requested booking dates will appear in calendar only after being
+          confirmed.
+        </p>
+      </div>
 
       {errorMessage ? (
         <div className="mt-4 text-sm text-red-600">
@@ -123,6 +134,11 @@ export default async function ICalEvents({ url }: { url?: string }) {
       ) : (
         <BigCalendarClient events={events} />
       )}
+
+      <p className="mt-6">
+        Questions? Contact us:{" "}
+        <EmailLink user="bandland" domain="semmelweisklinik.at" />
+      </p>
     </section>
   );
 }
