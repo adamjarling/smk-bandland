@@ -72,7 +72,6 @@ export default async function ICalEvents({ url }: { url?: string }) {
                 category, // <-- include category
               } as EventItem;
             });
-          console.log("parsedEvents:", parsedEvents);
 
           events.push(...parsedEvents);
         } catch (parseErr: any) {
