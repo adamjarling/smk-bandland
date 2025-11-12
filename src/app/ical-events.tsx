@@ -7,17 +7,25 @@ type EventItem = {
   start?: string;
   end?: string;
   location?: string;
+  category?: string;
 };
 
-const DEFAULT_ICS =
+const BANDLAND_CALENDAR_FEED_ICS =
   "https://export.kalender.digital/ics/5543690/1d670462e848c0d7b0d0/bandland.ics?past_months=3&future_months=36";
 
-const SECOND_ICS =
+const UG_WEST_CALENDAR_FEED_ICS =
   "https://export.kalender.digital/ics/3142259/1d670462e848c0d7b0d0/ugwest.ics?past_months=3&future_months=36";
+
+const BEWEGUNGSRAUM_CALENDAR_FEED_ICS =
+  "https://export.kalender.digital/ics/3142257/1d670462e848c0d7b0d0/bewegungsraum.ics?past_months=3&future_months=36";
 
 export default async function ICalEvents({ url }: { url?: string }) {
   // build list of URLs to fetch: default two plus optional override/additional url
-  const urls = [DEFAULT_ICS, SECOND_ICS];
+  const urls = [
+    BANDLAND_CALENDAR_FEED_ICS,
+    UG_WEST_CALENDAR_FEED_ICS,
+    BEWEGUNGSRAUM_CALENDAR_FEED_ICS,
+  ];
   if (url) urls.push(url);
 
   let events: EventItem[] = [];
@@ -44,13 +52,27 @@ export default async function ICalEvents({ url }: { url?: string }) {
           const parsed = ical.parseICS(ics);
           const parsedEvents = Object.values(parsed)
             .filter((e: any) => e && e.type === "VEVENT")
-            .map((e: any) => ({
-              uid: e.uid,
-              summary: e.summary,
-              start: e.start ? e.start.toISOString() : undefined,
-              end: e.end ? e.end.toISOString() : undefined,
-              location: e.location,
-            })) as EventItem[];
+            .map((e: any) => {
+              // pick a single category value (first item if array, or the string)
+              let category: string | undefined;
+              if (Array.isArray(e.categories) && e.categories.length > 0) {
+                category = String(e.categories[0]);
+              } else if (typeof e.categories === "string") {
+                category = e.categories;
+              } else {
+                category = undefined;
+              }
+
+              return {
+                uid: e.uid,
+                summary: e.summary,
+                start: e.start ? e.start.toISOString() : undefined,
+                end: e.end ? e.end.toISOString() : undefined,
+                location: e.location,
+                category, // <-- include category
+              } as EventItem;
+            });
+          console.log("parsedEvents:", parsedEvents);
 
           events.push(...parsedEvents);
         } catch (parseErr: any) {
