@@ -2,16 +2,13 @@
 
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
-import { Calendar, dateFnsLocalizer } from "react-big-calendar";
-
-import React from "react";
-import { enUS } from "date-fns/locale/en-US";
 import { format } from "date-fns/format";
 import { getDay } from "date-fns/getDay";
+import { enUS } from "date-fns/locale/en-US";
 import { parse } from "date-fns/parse";
 import { startOfWeek } from "date-fns/startOfWeek";
+import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 
-// ...existing code...
 const locales = { "en-US": enUS };
 const localizer = dateFnsLocalizer({
   format,
@@ -20,8 +17,6 @@ const localizer = dateFnsLocalizer({
   getDay,
   locales,
 });
-
-const CATEGORY_LIST = ["Bewegungsraum", "UG West", "Bandland"] as const;
 
 type EventItem = {
   uid?: string;
@@ -33,7 +28,6 @@ type EventItem = {
 };
 
 export default function BigCalendarClient({ events }: { events: EventItem[] }) {
-  // convert to react-big-calendar events
   const rbevents = events.map((e) => ({
     title: e.summary ?? "Untitled",
     start: e.start ? new Date(e.start) : new Date(),
@@ -49,7 +43,6 @@ export default function BigCalendarClient({ events }: { events: EventItem[] }) {
         events={rbevents}
         startAccessor="start"
         endAccessor="end"
-        // ...other props
       />
     </div>
   );

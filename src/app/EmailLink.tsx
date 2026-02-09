@@ -17,7 +17,7 @@ export default function EmailLink({ user, domain, subject, className }: Props) {
       `mailto:${email}${
         subject ? `?subject=${encodeURIComponent(subject)}` : ""
       }`,
-    [email, subject]
+    [email, subject],
   );
 
   return (

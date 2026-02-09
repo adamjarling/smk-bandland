@@ -1,6 +1,6 @@
+import ical from "node-ical";
 import BigCalendarClient from "./big-calendar-client";
 import EmailLink from "./EmailLink";
-import ical from "node-ical";
 
 type EventItem = {
   uid?: string;
@@ -52,14 +52,18 @@ export default async function ICalEvents({ url }: { url?: string }) {
         try {
           const parsed = ical.parseICS(ics);
           const parsedEvents = Object.values(parsed)
-            .filter((e: any) => e && e.type === "VEVENT")
-            .map((e: any) => {
+            .filter((e): e is ical.VEvent => e != null && e.type === "VEVENT")
+            .map((e) => {
               // pick a single category value (first item if array, or the string)
+              // categories exists at runtime but is missing from node-ical's type defs
+              const cats = (
+                e as ical.VEvent & { categories?: string | string[] }
+              ).categories;
               let category: string | undefined;
-              if (Array.isArray(e.categories) && e.categories.length > 0) {
-                category = String(e.categories[0]);
-              } else if (typeof e.categories === "string") {
-                category = e.categories;
+              if (Array.isArray(cats) && cats.length > 0) {
+                category = String(cats[0]);
+              } else if (typeof cats === "string") {
+                category = cats;
               } else {
                 category = undefined;
               }
@@ -75,14 +79,14 @@ export default async function ICalEvents({ url }: { url?: string }) {
             });
 
           events.push(...parsedEvents);
-        } catch (parseErr: any) {
+        } catch (parseErr: unknown) {
           fetchErrors.push(
-            `parse error for ${srcUrl}: ${parseErr?.message ?? parseErr}`
+            `parse error for ${srcUrl}: ${parseErr instanceof Error ? parseErr.message : String(parseErr)}`,
           );
         }
       } else {
         fetchErrors.push(
-          `network error fetching ${srcUrl}: ${resResult.reason}`
+          `network error fetching ${srcUrl}: ${resResult.reason}`,
         );
       }
     }
@@ -106,9 +110,9 @@ export default async function ICalEvents({ url }: { url?: string }) {
     if (events.length === 0 && fetchErrors.length > 0) {
       errorMessage = fetchErrors.join("; ");
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("ICal fetch/parse error (unexpected):", err);
-    errorMessage = err?.message ?? "Unknown error";
+    errorMessage = err instanceof Error ? err.message : "Unknown error";
   }
 
   return (
@@ -116,7 +120,11 @@ export default async function ICalEvents({ url }: { url?: string }) {
       <h2 className="text-4xl uppercase pb-4">Bandland Availability</h2>
 
       <div className="flex flex-col gap-2 mb-10">
-        <a href="https://forms.office.com/e/LXNahZk4Ns" target="_blank">
+        <a
+          href="https://forms.office.com/e/LXNahZk4Ns"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           Booking Request Form
         </a>
         <p className="text-sm text-zinc-600">

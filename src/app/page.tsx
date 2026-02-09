@@ -1,5 +1,5 @@
-import ICalEvents from "./ical-events";
 import Image from "next/image";
+import ICalEvents from "./ical-events";
 
 export default function Home() {
   return (
@@ -7,7 +7,6 @@ export default function Home() {
       <main className="flex min-h-screen w-full flex-col items-center justify-start gap-6 p-4 md:p-16 sm:items-start">
         <div>
           <Image
-            className=""
             src="/smk-logo.svg"
             alt="SMK Logo"
             width={100}
